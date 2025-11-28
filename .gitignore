@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+*.class
+*.so
+*.o
+*.dll
+.DS_Store
+.vscode/
