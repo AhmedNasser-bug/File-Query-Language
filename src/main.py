@@ -9,9 +9,9 @@ def repl():
         try:
             text = input("FQL > ")
             if text == "exit": break
-            # lexer = Lexer(text)
-            # parser = Parser(lexer.tokenize())
-            # parser.parse().execute()
+            lexer = Lexer(text)
+            parser = Parser(lexer.tokenize())
+            parser.parse().execute()
             print(f"Echo: {text}") 
         except KeyboardInterrupt:
             break
