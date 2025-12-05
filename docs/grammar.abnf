@@ -1,3 +1,14 @@
 ; FQL Grammar Specification (ABNF)
 ; Reference: RFC 5234
 ; Example: TOUCH file "test.txt" IN "./data"
+
+
+VERB
+
+TYPE
+
+KEYWORD
+
+PATH
+
+FILENAME
