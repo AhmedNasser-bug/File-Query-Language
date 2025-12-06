@@ -1,6 +1,6 @@
 import sys
-from .lexer import Lexer
-from .parser import Parser
+from lexer import Lexer
+from parser import Parser
 
 def repl():
     print("FQL v0.1 - File Query Language")
@@ -11,8 +11,8 @@ def repl():
             if text == "exit": break
             lexer = Lexer(text)
             parser = Parser(lexer.tokenize())
-            parser.parse().execute()
-            print(f"Echo: {text}") 
+            result = parser.parse().execute()
+            print(result)
         except KeyboardInterrupt:
             break
         except Exception as e:

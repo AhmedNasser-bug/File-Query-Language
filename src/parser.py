@@ -8,16 +8,19 @@ a list of tokens and returning the corresponding command object.
 
 
 
-from .tokens import Tokens
-from .commands.interface import ICommand
+from commands.interface import ICommand
 from commands.file_ops import *
 
-commands = {
-    "CREATE": CreateCommand,
+commands={
+    "create":CreateCommand.command,
+    "replace": RepalceCommand.command,
+    "delete":DeleteCommand.command,
+    "find":FindCommand.command,
 }
-class Parser:
-    def __init__(self, tokens):
-        self.tokens = tokens
 
+class Parser:
+    def __init__(self, tokens:list):
+        self.tokens = tokens
     def parse(self) -> ICommand:
-        pass
+        op = commands[self.tokens[0][TOKEN_VALUE]](self.tokens)
+        return op

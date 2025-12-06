@@ -1,37 +1,72 @@
 import re
 
-class Vlaid:
-    @staticmethod
-    def path(path):
-        """Validate if path follows correct format"""
-        return Vlaid.is_path(path)
+
+def validate_path(path_str: str) -> bool:
+    """
+    Validates the syntax of a file path for the FQL interpreter.
     
-    @staticmethod
-    def is_path(token):
-        """
-        Check if token is a path.
-        Valid paths:
-        - ~/folder/folder
-        - [partition]://folder/folder
-        - ~/[partition]://folder/folder
-        - /folder/folder
-        """
-        # Path patterns: contains / or ~ or ://
-        path_pattern = r'^(~|[a-zA-Z0-9]+:\/\/|~\/[a-zA-Z0-9]+:\/\/)(\/)?([a-zA-Z0-9_\-]+\/)*([a-zA-Z0-9_\-]+)?$|^\/([a-zA-Z0-9_\-]+\/)*([a-zA-Z0-9_\-]+)?$'
-        
-        if re.match(path_pattern, token):
-            return True
+    Accepts:
+    - Standard paths: 'folder/file'
+    - Drive letters: 'C:/folder' or 'C://'
+    - Tilde expansion: '~/folder'
+    - Mixed Tilde+Drive: '~/C:/folder' (as requested)
+    - Duplicate slashes: 'folder//subfolder' (common user input error, usually valid in OS)
+    """
+    if not isinstance(path_str, str) or not path_str.strip():
         return False
     
-    @staticmethod
-    def validate_verb(token):
-        """Validate if token is a valid VERB"""
-        valid_verbs = ["CREATE", "REPLACE", "FIND", "DELETE"]
-        return token.upper() in valid_verbs
+    # REGEX BREAKDOWN:
+    # 1. ^                      : Start of string
+    # 2. (?:~[\\/]+)?           : OPTIONAL Tilde start (matches "~/" or "~\")
+    # 3. (?:[a-zA-Z]:[\\/]+)?   : OPTIONAL Drive start (matches "C:/" or "D:\")
+    # 4. (?:[\\/]+)?            : OPTIONAL Root slash (matches "/" if no drive letter is present)
+    # 5. (?:[\w\s\-\.]+[\\/]*)* : PATH BODY (Repeated groups of names allowed charaters)
+    #                             Allowed: Alphanumeric, spaces, dashes, dots.
+    #                             Followed by optional separators.
+    # 6. $                      : End of string
     
-    @staticmethod
-    def validate_name(token):
-        """Validate if token is a valid file/folder name"""
-        # File names: alphanumeric, underscore, hyphen (no spaces)
-        name_pattern = r'^[a-zA-Z0-9_\-]+(\.[a-zA-Z0-9_\-]+)?$'
-        return re.match(name_pattern, token) is not None
+    pattern = r'^(?:~[\\/]+)?(?:[a-zA-Z]:[\\/]+|(?:[\\/]+))?(?:[\w\s\-\.]+[\\/]*)*$'
+    
+    return bool(re.match(pattern, path_str))
+
+def validate_filename(name_str: str) -> bool:
+    """
+    Validates if input is a string and a valid filename (not a path).
+    Ensures no path separators or illegal characters are present.
+    """
+    
+    if not isinstance(name_str, str):
+        return False
+        
+    # 2. Check for empty string or purely whitespace
+    if not name_str.strip():
+        return False
+
+    # 3. Regex to ban illegal characters (Windows is the strictest)
+    # Forbidden: < > : " / \ | ? *
+    illegal_pattern = r'[<>:"/\\|?*]'
+    if re.search(illegal_pattern, name_str):
+        return False
+
+    return True
+
+def is_string(token):
+    """Check if token is a string enclosed in single or double quotes."""
+    string_pattern = r"^(['\"])(.*?)(\1)$"
+    return re.match(string_pattern, token) is not None
+
+def validate_verb(token):
+    """Validate if token is a valid VERB"""
+    valid_verbs = ["create", "replace", "find", "delete"]
+    return token in valid_verbs
+
+def validate_type(token):
+    """Validate if token is a valid TYPE"""
+    valid_types = ["file", "dir"]
+    return token in valid_types
+
+def validate_keyword(token):
+    """Validate if token is a valid KEYWORD"""
+    valid_keywords = ["in", "where", "from", "with"]
+    return token in valid_keywords
+     

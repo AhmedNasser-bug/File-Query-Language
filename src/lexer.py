@@ -1,38 +1,58 @@
 from tokens import Tokens
-import validation
+from validation import *
 
 lang = {
-    "CREATE": Tokens.VERB,
-    "REPLACE": Tokens.VERB,
-    "FIND" :Tokens.VERB,
-    "DELETE":Tokens.VERB,
-    "FILE": Tokens.TYPE,
-    "DIR": Tokens.TYPE,
-    "With":Tokens.KEYWORD,
-    "IN": Tokens.KEYWORD,
-    "WHERE": Tokens.KEYWORD
+    "create": Tokens.VERB,
+    "replace": Tokens.VERB,
+    "find" :Tokens.VERB,
+    "delete":Tokens.VERB,
+    "file": Tokens.TYPE,
+    "dir": Tokens.TYPE,
+    "with":Tokens.KEYWORD,
+    "in": Tokens.KEYWORD,
+    "where": Tokens.KEYWORD
 }
+
+
 
 raw = "CREATE FILE 'Ac'"
 class Lexer:
     def __init__(self, source_code: str):
         self.source = source_code
+        self.words = self.get_raw_words()
 
+    def get_raw_words(self):
+        raw_words = []
+
+        for word in self.source.split():
+            if is_string(word):
+                raw_words.append(f'{word[1:-1]}')  # Strip quotes
+                continue
+            else:
+                word = word.lower().strip()
+                raw_words.append(word)
+            
+        return raw_words
+
+
+    def get_token_type(self, word: str):
+        if word in lang:
+            return lang[word]
+        else:
+            if validate_filename(word):
+                return Tokens.NAME
+            elif validate_path(word):
+                return Tokens.PATH
+
+
+        raise ValueError(f"Unknown token: {word}")
+    
     def tokenize(self):
         tokens_result = []
-        words = self.source.split()
-        file_type = "FILE"  # Default type
-        for word in words:
-            if lang[word.upper()] == Tokens.VERB:
-                tokens_result.append(word ,Tokens.VERB)
-            elif lang[word.upper()] == Tokens.KEYWORD:
-                tokens_result.append(word.upper(), Tokens.KEYWORD)
-            elif lang[word.upper()] == Tokens.TYPE:
-                file_type = word.upper()
-                tokens_result.append(file_type, Tokens.TYPE)
-            else:
-                if validation.Vlaid.is_path(word):
-                    tokens_result.append(word, Tokens.PATH)
-                else:
-                    tokens_result.append(word, Tokens.NAME)
+        
+        for word in self.words:
+            tokens_result.append((word, self.get_token_type(word)))
+            
+                
+
         return tokens_result

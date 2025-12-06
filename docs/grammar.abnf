@@ -2,13 +2,5 @@
 ; Reference: RFC 5234
 ; Example: TOUCH file "test.txt" IN "./data"
 
-
-VERB
-
-TYPE
-
-KEYWORD
-
-PATH
-
-FILENAME
+VERB = create | replace | delete | find
+ARG = 
