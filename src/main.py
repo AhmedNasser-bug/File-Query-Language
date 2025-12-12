@@ -18,7 +18,7 @@ def repl():
     print("Type 'exit' to quit.")
     while True:
         try:
-            text = input("FQL > ")
+            text = input(f"FQL {os.getcwd()} >>")
             if text == "exit": break
             lexer = Lexer(text)
             parser = Parser(lexer.tokenize())
@@ -49,3 +49,4 @@ if __name__ == "__main__":
 
     # 4. Run the REPL (Now running as Admin)
     repl()
+

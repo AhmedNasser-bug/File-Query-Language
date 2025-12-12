@@ -7,10 +7,11 @@ lang = {
     "find" :Tokens.VERB,
     "delete":Tokens.VERB,
     "file": Tokens.TYPE,
-    "dir": Tokens.TYPE,
+    "folder": Tokens.TYPE,
     "with":Tokens.KEYWORD,
     "in": Tokens.KEYWORD,
-    "where": Tokens.KEYWORD
+    "where": Tokens.KEYWORD,
+    "go":Tokens.VERB
 }
 
 
@@ -49,8 +50,6 @@ class Lexer:
         tokens_result = []
         
         for word in self.words:
-            tokens_result.append((word, self.get_token_type(word)))
-            
-                
+            tokens_result.append((word, self.get_token_type(word))) 
 
         return tokens_result

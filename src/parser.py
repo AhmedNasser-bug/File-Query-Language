@@ -6,16 +6,15 @@ a list of tokens and returning the corresponding command object.
 '''
 
 
-
-
 from commands.interface import ICommand
 from commands.file_ops import *
 
 commands={
     "create":CreateCommand.command,
-    "replace": RepalceCommand.command,
+    "replace": ReplaceCommand.command,
     "delete":DeleteCommand.command,
     "find":FindCommand.command,
+    "go":GoCommand.command
 }
 
 class Parser:

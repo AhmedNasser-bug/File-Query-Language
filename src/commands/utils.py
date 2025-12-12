@@ -47,15 +47,45 @@ def create_file(path: str, content: str = ""):
     """
     # Flags: Write Only | Create if missing | Truncate (overwrite) if exists
     flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
+    try:
+        full_path = os.path.join(path, content)
+        fd = os.open(full_path, flags, 0o644)
+        if content:
+            os.write(fd, content.encode('utf-8'))
+        os.close(fd)
+        print(f"Success: Created {path}")
+        return 1
+    except PermissionError:
+        print(f"Error: Permission denied for '{path}'. \nAre you trying to write to a folder or a protected drive root?")
+        return(0)
+    except FileNotFoundError:
+        print(f"Error: The path '{path}' does not exist (Check if Drive A: exists).")
+        return(0)
+    except Exception as e:
+        print(f"Error: {e}")
+        return(0)
     
-    # 0o644 = Read/Write for owner, Read for others (standard permission)
-    fd = os.open(path, flags, 0o644)
+def create_folder(path: str, folder_name: str):
+    """
+    path: The location (e.g., "A:/")
+    folder_name: The name of the new folder (e.g., "MyNewFolder")
+    """
+    # 1. Join the path and the folder name
+    full_path = os.path.join(path, folder_name)
 
-    if content:
-        os.write(fd, content.encode('utf-8'))
-    os.close(fd)
-    return 1
-
+    try:
+        # 2. Create the directory
+        # exist_ok=True prevents errors if the folder already exists
+        os.makedirs(full_path, exist_ok=True)
+        print(f"Success: Created folder at {full_path}")
+        return 1
+    except PermissionError:
+        print(f"Error: Permission denied. Cannot create '{full_path}'.")
+        return 0
+    except Exception as e:
+        print(f"Error: {e}")
+        return 0
+    
 def delete_dir(path: str):
     """
     Recursively deletes a directory and all its contents (files/subdirs).
@@ -108,3 +138,27 @@ def smart_move(src: str, dst: str) -> str:
         return f"Moved '{src}' -> '{real_dst}'"
     except OSError as e:
         raise OSError(f"Failed to move/replace '{src}': {e}")
+def go(path: str) -> str:
+    """
+    Changes the current working directory to the specified path.
+    Returns the new current working directory path.
+    
+    This effectively implements the 'cd' command behavior.
+    """
+    try:
+        # 1. Perform the directory change
+        os.chdir(path)
+        
+        # 2. Get the new absolute path (this is the 'new value' you care about)
+        new_path = os.getcwd()
+        
+        # Note: os.curdir remains '.' constant in Python, so we don't 'assign' to it.
+        # Instead, we return the resolved path which represents the new state.
+        return f"you went to: {new_path}"
+        
+    except FileNotFoundError:
+        return f"Error: Directory '{path}' not found."
+    except PermissionError:
+        return f"Error: Permission denied accessing '{path}'."
+    except Exception as e:
+        return f"Error changing directory: {e}"

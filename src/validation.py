@@ -17,15 +17,15 @@ def validate_path(path_str: str) -> bool:
     
     # REGEX BREAKDOWN:
     # 1. ^                      : Start of string
-    # 2. (?:~[\\/]+)?           : OPTIONAL Tilde start (matches "~/" or "~\")
+    # 2. (?:[\\/]+)?           : OPTIONAL Tilde start (matches "/" or "~\")
     # 3. (?:[a-zA-Z]:[\\/]+)?   : OPTIONAL Drive start (matches "C:/" or "D:\")
     # 4. (?:[\\/]+)?            : OPTIONAL Root slash (matches "/" if no drive letter is present)
-    # 5. (?:[\w\s\-\.]+[\\/]*)* : PATH BODY (Repeated groups of names allowed charaters)
+    # 5. (?:[\w\s\-\.]+[\\/]) : PATH BODY (Repeated groups of names allowed charaters)
     #                             Allowed: Alphanumeric, spaces, dashes, dots.
     #                             Followed by optional separators.
     # 6. $                      : End of string
     
-    pattern = r'^(?:~[\\/]+)?(?:[a-zA-Z]:[\\/]+|(?:[\\/]+))?(?:[\w\s\-\.]+[\\/]*)*$'
+    pattern = r'^(?:~[\\/]+)?(?:[a-zA-Z]:[\\/]+|(?:[\\/]+))?(?:[\w\s\-\.]+[\\/])$'
     
     return bool(re.match(pattern, path_str))
 
@@ -57,16 +57,15 @@ def is_string(token):
 
 def validate_verb(token):
     """Validate if token is a valid VERB"""
-    valid_verbs = ["create", "replace", "find", "delete"]
+    valid_verbs = ["create", "replace", "find", "delete","go"]
     return token in valid_verbs
 
 def validate_type(token):
     """Validate if token is a valid TYPE"""
-    valid_types = ["file", "dir"]
+    valid_types = ["file", "folder"]
     return token in valid_types
 
 def validate_keyword(token):
     """Validate if token is a valid KEYWORD"""
     valid_keywords = ["in", "where", "from", "with"]
     return token in valid_keywords
-     
