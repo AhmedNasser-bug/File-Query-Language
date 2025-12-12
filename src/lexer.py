@@ -15,7 +15,6 @@ lang = {
 
 
 
-raw = "CREATE FILE 'Ac'"
 class Lexer:
     def __init__(self, source_code: str):
         self.source = source_code
@@ -25,15 +24,14 @@ class Lexer:
         raw_words = []
 
         for word in self.source.split():
-            if is_string(word):
-                raw_words.append(f'{word[1:-1]}')  # Strip quotes
+            if is_string(word): # have qoutes (name, path)
+                raw_words.append(f'{word[1:-1]}')  # Strip quotes "ahmed" -> ahmed
                 continue
-            else:
+            else: # anything else
                 word = word.lower().strip()
                 raw_words.append(word)
             
         return raw_words
-
 
     def get_token_type(self, word: str):
         if word in lang:
