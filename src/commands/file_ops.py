@@ -160,20 +160,27 @@ class FindCommand(interface.ICommand):
         self.validate()
         
     def validate(self) -> bool:
-        if len(self.tokens)!=4:
+        if len(self.tokens)!=4 and len(self.tokens)!=2:
             print("not a correct FIND Command format, maybe you forget something")
             return False
+        if len(self.tokens)==4:
+            if ( self.tokens[1][TOKEN_TYPE] != TokenTypes.NAME ) or ( self.tokens[2][TOKEN_TYPE].lower() != 'in') or ( self.tokens[3][TOKEN_TYPE] != TokenTypes.PATH ) :
+             print("not a correct FIND Command format, check the command order")  
+             return False   
+            self.path = self.tokens[3][TOKEN_VALUE]
+            self.data = self.tokens[1][TOKEN_VALUE]
+            return True
+        elif len(self.tokens)==2:
+            self.path = os.getcwd()
+            self.data = self.tokens[1][TOKEN_VALUE]
+            return True
+        else:
+            return False
 
-        if ( self.tokens[1][TOKEN_TYPE] != TokenTypes.NAME ) or ( self.tokens[2][TOKEN_TYPE] != TokenTypes.PATH ):
-           print("not a correct FIND Command format, check the command order")  
-           return False   
-    
-        self.data = self.tokens[1][TOKEN_VALUE]
         
-        return True
     def execute(self) -> str:
-        res = scan_directory(os.getcwd(),self.data)
-        return f"FOUND {res} items matching {self.data}"
+        res = find_by_name(self.path,self.data)
+        return f"FOUND {len(res['files']) + len(res['folders'])} items matching {self.data}"
     
 class GoCommand(interface.ICommand):
     '''

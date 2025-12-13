@@ -3,7 +3,6 @@ from Lexer.lexer import Lexer
 from parser import Parser
 
 import ctypes
-import os
 
 
 def is_admin():
