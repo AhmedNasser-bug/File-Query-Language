@@ -121,21 +121,24 @@ class DeleteCommand(interface.ICommand):
     def validate(self) -> bool:
         if len(self.tokens)==2:
             if (self.tokens[1][TOKEN_TYPE] != TokenTypes.NAME ) :
-                print("not a corrert DELETE Command format,check the command order")  
+                print("not a correct DELETE Command format,check the command order")  
                 return False 
             self.path = os.getcwd()
             self.data = self.tokens[1][TOKEN_VALUE]
             return True
         elif len(self.tokens)==4:  
             if  ( self.tokens[1][TOKEN_TYPE] != TokenTypes.NAME ) or ( self.tokens[2][TOKEN_TYPE] != TokenTypes.KEYWORD ) or ( self.tokens[3][TOKEN_TYPE] != TokenTypes.PATH ) :
-                print("not a corrert CREATE Command format,check the command order")  
+                print("not a correct CREATE Command format,check the command order")  
                 return False 
-            if self.tokens[3][TOKEN_VALUE].lower() !="in": 
-                print("not a corrert CREATE Command format,wrong keyword")
+            if self.tokens[2][TOKEN_VALUE].lower() !="in": 
+                print("not a correct CREATE Command format,wrong keyword")
                 return False
             self.path = self.tokens[3][TOKEN_VALUE]
             self.data = self.tokens[1][TOKEN_VALUE]
             return True
+        else:
+            print("not a correct DELETE Command format,maype you forget something")
+            return False
 
     def execute(self) -> str:
         return f"DELETED {self.data} IN {self.path}" if delete_dir(self.path) else f"FAILED TO DELETE {self.data} IN {self.path}"
@@ -159,22 +162,20 @@ class FindCommand(interface.ICommand):
         self.tokens=tokens
         self.validate()
         
-    def validate(self) -> bool:
-        if len(self.tokens)!=4 and len(self.tokens)!=2:
-            print("not a correct FIND Command format, maybe you forget something")
-            return False
+    def validate(self) -> bool:            
         if len(self.tokens)==4:
-            if ( self.tokens[1][TOKEN_TYPE] != TokenTypes.NAME ) or ( self.tokens[2][TOKEN_TYPE].lower() != 'in') or ( self.tokens[3][TOKEN_TYPE] != TokenTypes.PATH ) :
-             print("not a correct FIND Command format, check the command order")  
-             return False   
+            if ( self.tokens[1][TOKEN_TYPE] != TokenTypes.NAME ) or ( self.tokens[2][TOKEN_VALUE].lower() != 'in') or ( self.tokens[3][TOKEN_TYPE] != TokenTypes.PATH ) :
+                print("not a correct FIND Command format, check the command order")  
+                return False   
             self.path = self.tokens[3][TOKEN_VALUE]
             self.data = self.tokens[1][TOKEN_VALUE]
             return True
         elif len(self.tokens)==2:
-            self.path = os.getcwd()
-            self.data = self.tokens[1][TOKEN_VALUE]
-            return True
+                self.path = os.getcwd()
+                self.data = self.tokens[1][TOKEN_VALUE]
+                return True
         else:
+            print("not a correct FIND Command format, maybe you forget something")
             return False
 
         

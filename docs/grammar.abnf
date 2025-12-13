@@ -1,6 +1,43 @@
 ; FQL Grammar Specification (ABNF)
 ; Reference: RFC 5234
-; Example: TOUCH file "test.txt" IN "./data"
+; Case-insensitive
 
-VERB = create | replace | delete | find
-ARG = 
+main = command
+
+command = create-cmd / replace-cmd / delete-cmd / find-cmd / go-cmd / help-cmd / curdir-cmd
+
+; --- Commands ---
+
+; Example: create file "data.txt" in "./tmp"
+create-cmd = "create" SP type SP name [ SP "in" SP path ]
+
+; Example: replace "./old.txt" with "./new.txt"
+replace-cmd = "replace" SP path SP "with" SP path
+
+; Example: delete "file.log" in "./logs"
+delete-cmd = "delete" SP name [ SP "in" SP path ]
+
+; Example: find "pattern"
+find-cmd = "find" SP name [ SP path ]
+
+; Example: go "./src"
+go-cmd = "go" SP path
+
+; Example: help
+help-cmd = "help"
+
+; Example: curdir
+curdir-cmd = "curdir"
+
+; --- Components ---
+
+type = "file" / "folder"
+
+; Terminals (Abstracted: Handled by Lexer)
+; Names and Paths are expected to be quoted strings
+name = quoted-string
+path = quoted-string
+
+quoted-string = DQUOTE *CHAR DQUOTE
+
+SP = 1*SPACE

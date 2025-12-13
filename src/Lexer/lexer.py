@@ -25,7 +25,7 @@ class Lexer:
         else:
             if Language.validate_filename(word):
                 return TokenTypes.NAME
-            elif Lexer.validate_path(word):
+            elif Language.validate_path(word):
                 return TokenTypes.PATH
 
 
