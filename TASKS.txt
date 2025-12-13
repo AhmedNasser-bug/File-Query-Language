@@ -1,0 +1,28 @@
+TASKS:
+1. write ABNF docs
+2. write cpp matching algorithm
+- INTPUT: regex pattern, OUTPUT: dictionary {"file": file paths list, "dir": dir paths list}
+3. write file index using tree command
+
+IDEAS:
+dirpath vs filepath
+fix replace command
+1. SQLite file path db with utility function to seprate paths returns
+2. Create index in path command
+3. Create an executable
+4. value() function for the command interface with specific return types and list input feature for create, delete, and find commands
+
+
+Using scandir function, write a utility module for the four primitive commands
+
+
+
+CREATE -> replacing a dir or a file in a given directory
+
+
+
+REPLACE -> replaces the 
+
+
+
+FIND -> Returning Paths of file equivalent to the input string

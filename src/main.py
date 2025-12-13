@@ -1,5 +1,5 @@
 import sys
-from lexer import Lexer
+from Lexer.lexer import Lexer
 from parser import Parser
 
 import ctypes
@@ -18,7 +18,7 @@ def repl():
     print("Type 'exit' to quit.")
     while True:
         try:
-            text = input(f"FQL {os.getcwd()} >>")
+            text = input(f"FQL >>")
             if text == "exit": break
             lexer = Lexer(text)
             parser = Parser(lexer.tokenize())

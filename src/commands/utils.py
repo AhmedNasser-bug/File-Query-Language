@@ -40,6 +40,59 @@ def scan_directory(path: str, pattern: str) -> int:
         print(f"[Error] Ripgrep failed: {e}")
         return 0
 
+def find_by_name(path: str, name: str) -> dict:
+    """
+    Efficiently searches for files and folders by name (substring match).
+    Uses os.scandir and iterative stack for performance.
+    
+    Args:
+        path (str): The root path to start searching from.
+        name (str): The substring to look for in file/folder names.
+        
+    Returns:
+        dict: {'files': [full_paths], 'folders': [full_paths]}
+    """
+    results = {'files': [], 'folders': []}
+    
+    # Check if path exists first
+    if not os.path.exists(path):
+        print(f"Error: Path '{path}' does not exist.")
+        return results
+
+    # Use stack for iterative DFS - faster than recursion and avoids stack overflow
+    stack = [path]
+    
+    while stack:
+        current_dir = stack.pop()
+        
+        try:
+            # os.scandir is faster than os.listdir/walk as it retrieves 
+            # file type attributes in the initial system call.
+            with os.scandir(current_dir) as scanner:
+                for entry in scanner:
+                    # Check if name is in the entry name (substring match)
+                    if name in entry.name:
+                        if entry.is_file():
+                            results['files'].append(entry.path)
+                            print(f"File: {entry.path}")
+                        elif entry.is_dir():
+                            results['folders'].append(entry.path)
+                            print(f"Folder: {entry.path}")
+                    
+                    # Add subdirectories to stack for traversal
+                    if entry.is_dir(follow_symlinks=False):
+                        stack.append(entry.path)
+                        
+        except PermissionError:
+            # Skip folders we don't have access to
+            continue
+        except Exception as e:
+            # Handle other unforeseen errors to keep scanning
+            print(f"Error accessing {current_dir}: {e}")
+            continue
+            
+    return results
+
 def create_file(path: str, content: str = ""):
     """
     Creates a new file (or overwrites) and writes content.

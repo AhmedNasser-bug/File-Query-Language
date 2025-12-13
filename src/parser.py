@@ -14,7 +14,9 @@ commands={
     "replace": ReplaceCommand.command,
     "delete":DeleteCommand.command,
     "find":FindCommand.command,
-    "go":GoCommand.command
+    "go":GoCommand.command,
+    "help":HelpCommand.command,
+    "curdir":CurdirCommand.command
 }
 
 class Parser:

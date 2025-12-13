@@ -1,19 +1,4 @@
-from tokens import Tokens
-from validation import *
-
-lang = {
-    "create": Tokens.VERB,
-    "replace": Tokens.VERB,
-    "find" :Tokens.VERB,
-    "delete":Tokens.VERB,
-    "file": Tokens.TYPE,
-    "folder": Tokens.TYPE,
-    "with":Tokens.KEYWORD,
-    "in": Tokens.KEYWORD,
-    "where": Tokens.KEYWORD,
-    "go":Tokens.VERB
-}
-
+from Lexer.language import Language, TokenTypes
 
 
 class Lexer:
@@ -25,7 +10,7 @@ class Lexer:
         raw_words = []
 
         for word in self.source.split():
-            if is_string(word): # have qoutes (name, path)
+            if Language.is_string(word): # have qoutes (name, path)
                 raw_words.append(f'{word[1:-1]}')  # Strip quotes "ahmed" -> ahmed
                 continue
             else: # anything else
@@ -35,13 +20,13 @@ class Lexer:
         return raw_words
 
     def get_token_type(self, word: str):
-        if word in lang:
-            return lang[word]
+        if word in Language.word_types:
+            return Language.word_types[word]
         else:
-            if validate_filename(word):
-                return Tokens.NAME
-            elif validate_path(word):
-                return Tokens.PATH
+            if Language.validate_filename(word):
+                return TokenTypes.NAME
+            elif Lexer.validate_path(word):
+                return TokenTypes.PATH
 
 
         raise ValueError(f"Unknown token: {word}")
@@ -53,3 +38,9 @@ class Lexer:
             tokens_result.append((word, self.get_token_type(word))) 
 
         return tokens_result
+    
+if __name__ == "__main__":
+    code = 'go "d:/"'
+    lexer = Lexer(code)
+    tokens = lexer.tokenize()
+    print(tokens)
